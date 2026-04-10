@@ -629,3 +629,22 @@ function TabBtn({ active, onClick, icon, label }: { active: boolean, onClick: ()
     </button>
   );
 }
+
+function DrawerTagSection({ title, tags, onSelect }: { title: string, tags: string[], onSelect: (tag: string) => void }) {
+  return (
+    <div className="flex flex-col gap-3">
+      <h4 className="text-[10px] font-black uppercase text-slate-500 tracking-widest">{title}</h4>
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag, i) => (
+          <button
+            key={i}
+            onClick={() => onSelect(tag)}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 hover:border-brand-yellow/50 hover:text-brand-yellow transition-all"
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
