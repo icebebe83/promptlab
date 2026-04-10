@@ -65,6 +65,22 @@ export default function BuilderPage() {
     ...legacyLightingTags,
   ];
 
+  const photoActionTags = [
+    { id: "photo-act-1", content: "Looking at Camera", category: "action", translationKo: "카메라를 응시하는" },
+    { id: "photo-act-2", content: "Captured in Motion", category: "action", translationKo: "역동적인 동작" },
+    { id: "photo-act-3", content: "Standing Elegantly", category: "action", translationKo: "우아하게 서 있는" },
+    { id: "photo-act-4", content: "Candid Moment", category: "action", translationKo: "자연스러운 순간" },
+    { id: "photo-act-5", content: "High-Fashion Pose", category: "action", translationKo: "하이패션 포즈" },
+  ];
+
+  const photoDetailTags = [
+    { id: "photo-det-1", content: "High Skin Texture", category: "details", translationKo: "피부 질감 강조" },
+    { id: "photo-det-2", content: "Microscopic Surface Detail", category: "details", translationKo: "미세 표면 디테일" },
+    { id: "photo-det-3", content: "Sharp Focus", category: "details", translationKo: "선명한 초점" },
+    { id: "photo-det-4", content: "Intricate Fabric Weave", category: "details", translationKo: "섬세한 직물 짜임" },
+    { id: "photo-det-5", content: "Ultra-High Resolution", category: "details", translationKo: "초고해상도" },
+  ];
+
   // ===== GRAPHIC DESIGN 모드 태그 세트 =====
   const designSubjectTags = [
     { id: "gd-subject-1", content: "Brand Logo", category: "person", translationKo: "브랜드 로고" },
@@ -112,20 +128,40 @@ export default function BuilderPage() {
     { id: "gd-light-6", content: "High Contrast Shadows", category: "lighting", translationKo: "고대비 그림자" },
   ];
 
+  const designActionTags = [
+    { id: "gd-act-1", content: "Professionally Arranged", category: "action", translationKo: "전문적으로 배열된" },
+    { id: "gd-act-2", content: "Stylishly Floating", category: "action", translationKo: "스타일리시하게 떠 있는" },
+    { id: "gd-act-3", content: "Centered on Canvas", category: "action", translationKo: "캔버스 중앙 배치" },
+    { id: "gd-act-4", content: "Symmetrically Composed", category: "action", translationKo: "대칭적 구성" },
+    { id: "gd-act-5", content: "Technically Specified", category: "action", translationKo: "기술적으로 명시된" },
+  ];
+
+  const designDetailTags = [
+    { id: "gd-det-1", content: "Clean Geometric Lines", category: "details", translationKo: "깨끗한 기하학적 선" },
+    { id: "gd-det-2", content: "Absolute Vector Precision", category: "details", translationKo: "완벽한 벡터 정밀도" },
+    { id: "gd-det-3", content: "High-Contrast Clarity", category: "details", translationKo: "고대비 선명도" },
+    { id: "gd-det-4", content: "Minimalist Branding Detail", category: "details", translationKo: "미니멀 브랜딩 디테일" },
+    { id: "gd-det-5", content: "Mathematical Balance", category: "details", translationKo: "수학적 균형" },
+  ];
+
   const photographyTags = {
     person: photoPersonTags,
-    art3d: photoArt3dTags,
+    action: photoActionTags,
     design: photoDesignTags,
+    art3d: photoArt3dTags,
     technical: photoCameraTags,
     lighting: photoLightingTags,
+    details: photoDetailTags,
   };
 
   const graphicTags = {
     person: designSubjectTags,
-    art3d: designStyleTags,
+    action: designActionTags,
     design: designLayoutTags,
+    art3d: designStyleTags,
     technical: designTechnicalTags,
     lighting: designLightingTags,
+    details: designDetailTags,
   };
 
   return (

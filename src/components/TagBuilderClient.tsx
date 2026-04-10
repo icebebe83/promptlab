@@ -31,26 +31,32 @@ const mjOrder: Record<string, number> = {
 
 const nbOrder: Record<string, number> = {
   person: 1,      // 주제
-  design: 2,      // 배경
-  art3d: 3,       // 스타일/매체
-  technical: 4,   // 구도/카메라
-  lighting: 5,    // 조명
+  action: 2,      // 동작/상태
+  design: 3,      // 배경
+  art3d: 4,       // 스타일/매체
+  technical: 5,   // 구도/카메라
+  lighting: 6,    // 조명
+  details: 7,     // 세부 묘사
 };
 
 const categoryTranslation: Record<string, Record<string, string>> = {
   photography: {
     person: "인물 / 피사체",
+    action: "동작 / 상태",
     art3d: "촬영 매체",
     design: "배경 / 환경",
     technical: "카메라 제어",
     lighting: "조명",
+    details: "세부 묘사",
   },
   graphic: {
     person: "디자인 주제",
+    action: "상태 / 배열",
     art3d: "그래픽 스타일",
     design: "레이아웃 / 배경",
     technical: "구도 / 원근",
     lighting: "조명 / 질감",
+    details: "디자인 정밀도",
   },
 };
 
@@ -64,10 +70,12 @@ export type TagItem = {
 // Colors based on category to organize visually
 const categoryColors: Record<string, string> = {
   person: "bg-blue-900/40 text-blue-300 border-blue-500/50",
+  action: "bg-teal-900/40 text-teal-300 border-teal-500/50",
   art3d: "bg-purple-900/40 text-purple-300 border-purple-500/50",
   design: "bg-emerald-900/40 text-emerald-300 border-emerald-500/50",
   technical: "bg-brand-yellow/20 text-brand-yellow border-brand-yellow/50",
   lighting: "bg-orange-900/40 text-orange-300 border-orange-500/50",
+  details: "bg-rose-900/40 text-rose-300 border-rose-500/50",
 };
 
 // Step labels for visual output
@@ -94,6 +102,7 @@ type PromptStep = {
   step: number;
   label: string;
   content: string;
+  isEmpty?: boolean;
 };
 
 export default function TagBuilderClient({
@@ -106,6 +115,7 @@ export default function TagBuilderClient({
   // Tags the user has currently placed on the canvas
   const [selectedTags, setSelectedTags] = useState<TagItem[]>([]);
   const [customText, setCustomText] = useState("");
+  const [isBuilding, setIsBuilding] = useState(false);
   const [complexity, setComplexity] = useState(2);
   const [labMode, setLabMode] = useState<'photography' | 'graphic'>('photography');
   const [optimizationMode, setOptimizationMode] = useState<'mj' | 'nb'>('mj');
@@ -229,6 +239,57 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
     e.target.value = '';
   };
 
+  const handleBuildPrompt = async () => {
+    try {
+      setIsBuilding(true);
+      
+      const allCategories = ['person', 'action', 'art3d', 'design', 'technical', 'lighting', 'details'];
+      const existingCategories = [...new Set(selectedTags.map(t => t.category))];
+      
+      let categoriesToFill = allCategories;
+      // If Midjourney mode, typically action and details are less focused, but we still generate them for a robust prompt 
+      // or we can strictly filter them. Let's strictly filter for MJ to save tokens.
+      if (optimizationMode === 'mj') {
+        categoriesToFill = ['person', 'art3d', 'design', 'technical', 'lighting'];
+      }
+      
+      const missingCategories = categoriesToFill.filter(c => !existingCategories.includes(c));
+      
+      if (missingCategories.length === 0) {
+        toast("이미 모든 설계 요소가 구성되어 있습니다.", "success");
+        setIsBuilding(false);
+        return;
+      }
+
+      const response = await fetch('/api/build', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customText,
+          existingTags: selectedTags,
+          missingCategories,
+          labMode,
+          optimizationMode,
+          complexity
+        })
+      });
+
+      if (!response.ok) throw new Error("서버 오류");
+      
+      const data = await response.json();
+      if (data.suggestedTags && data.suggestedTags.length > 0) {
+        setSelectedTags(prev => [...prev, ...data.suggestedTags]);
+        toast("AI가 프롬프트를 전문적으로 완성했습니다!", "success");
+      } else {
+        toast("추천할 태그 내용이 없습니다.", "error");
+      }
+    } catch (err) {
+      toast("프롬프트 빌드 중 오류가 발생했습니다.", "error");
+    } finally {
+      setIsBuilding(false);
+    }
+  };
+
   const generatePromptSteps = (): PromptStep[] => {
     if (selectedTags.length === 0 && !customText) {
       return [{ step: 0, label: "안내", content: "설계할 주제를 입력하거나 태그를 선택해 주세요..." }];
@@ -246,10 +307,10 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
 
       let steps: PromptStep[] = [
         { step: 1, label: mjStepLabels[1], content: coreSubject },
-        { step: 2, label: mjStepLabels[2], content: medium.length > 0 ? medium.join(", ") : (isGraphic ? "vector graphic art" : "commercial photography") },
-        { step: 3, label: mjStepLabels[3], content: environment.length > 0 ? environment.join(", ") : (isGraphic ? "clean studio background" : "cinematic environment") },
-        { step: 4, label: mjStepLabels[4], content: lighting.length > 0 ? lighting.join(", ") : (isGraphic ? "global illumination" : "studio lighting") },
-        { step: 5, label: mjStepLabels[5], content: composition.length > 0 ? composition.join(", ") : (isGraphic ? "isometric perspective" : "85mm lens shot") },
+        { step: 2, label: mjStepLabels[2], content: medium.length > 0 ? medium.join(", ") : "미지정 (AI 자율 반영)", isEmpty: medium.length === 0 },
+        { step: 3, label: mjStepLabels[3], content: environment.length > 0 ? environment.join(", ") : "미지정 (AI 자율 반영)", isEmpty: environment.length === 0 },
+        { step: 4, label: mjStepLabels[4], content: lighting.length > 0 ? lighting.join(", ") : "미지정 (AI 자율 반영)", isEmpty: lighting.length === 0 },
+        { step: 5, label: mjStepLabels[5], content: composition.length > 0 ? composition.join(", ") : "미지정 (AI 자율 반영)", isEmpty: composition.length === 0 },
       ];
 
       // Filter photography terms in Graphic mode
@@ -263,7 +324,9 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
       // Auto-Parameters
       let paramContent: string;
       if (isGraphic) {
-        paramContent = `--no photorealistic --v 6.1 --ar 3:4 --stylize ${complexity * 333}`;
+        const hasCharacter = selectedTags.some(t => t.content.toLowerCase().includes('character') || t.content.toLowerCase().includes('person'));
+        const noParams = hasCharacter ? "--no photorealistic" : "--no photorealistic, character, person, human, anime";
+        paramContent = `${noParams} --v 6.1 --ar 3:4 --stylize ${complexity * 333}`;
       } else {
         const ar = complexity === 1 ? "16:9" : (complexity === 3 ? "4:5" : "1:1");
         paramContent = `--v 6.1 --ar ${ar} --stylize ${complexity * 250}`;
@@ -275,21 +338,21 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
     
     // Nanobanana Mode: Structured 7-Step Narrative
     else {
-      const actionBlock = isGraphic ? "professionally arranged as a technical design specification" : "is presented in a high-fidelity commercial setup";
-      const background = selectedTags.filter(t => t.category === 'design').map(t => t.content).join(", ") || (isGraphic ? "minimalist grid layout" : "cinematic studio background");
-      const style = selectedTags.filter(t => t.category === 'art3d').map(t => t.content).join(", ") || (isGraphic ? "Swiss Style vector aesthetic" : "hyper-realistic photography");
-      const composition = selectedTags.filter(t => t.category === 'technical').map(t => t.content).join(", ") || (isGraphic ? "precise isometric grid" : "85mm f/1.4 lens optics");
-      const lightingVal = selectedTags.filter(t => t.category === 'lighting').map(t => t.content).join(", ") || (isGraphic ? "ambient occlusion and global illumination" : "sophisticated rim lighting setup");
-      const details = isGraphic ? "absolute vector precision, clean geometric lines, high-contrast branding clarity" : "intricate skin textures, microscopic surface detail, ultra-high resolution masterwork";
+      const actionBlock = selectedTags.filter(t => t.category === 'action').map(t => t.content);
+      const background = selectedTags.filter(t => t.category === 'design').map(t => t.content);
+      const style = selectedTags.filter(t => t.category === 'art3d').map(t => t.content);
+      const composition = selectedTags.filter(t => t.category === 'technical').map(t => t.content);
+      const lightingVal = selectedTags.filter(t => t.category === 'lighting').map(t => t.content);
+      const details = selectedTags.filter(t => t.category === 'details').map(t => t.content);
 
       const steps: PromptStep[] = [
         { step: 1, label: nbStepLabels[1], content: coreSubject },
-        { step: 2, label: nbStepLabels[2], content: actionBlock },
-        { step: 3, label: nbStepLabels[3], content: background },
-        { step: 4, label: nbStepLabels[4], content: style },
-        { step: 5, label: nbStepLabels[5], content: composition },
-        { step: 6, label: nbStepLabels[6], content: lightingVal },
-        { step: 7, label: nbStepLabels[7], content: details },
+        { step: 2, label: nbStepLabels[2], content: actionBlock.length > 0 ? actionBlock.join(", ") : "미지정 (AI 자율 반영)", isEmpty: actionBlock.length === 0 },
+        { step: 3, label: nbStepLabels[3], content: background.length > 0 ? background.join(", ") : "미지정 (AI 자율 반영)", isEmpty: background.length === 0 },
+        { step: 4, label: nbStepLabels[4], content: style.length > 0 ? style.join(", ") : "미지정 (AI 자율 반영)", isEmpty: style.length === 0 },
+        { step: 5, label: nbStepLabels[5], content: composition.length > 0 ? composition.join(", ") : "미지정 (AI 자율 반영)", isEmpty: composition.length === 0 },
+        { step: 6, label: nbStepLabels[6], content: lightingVal.length > 0 ? lightingVal.join(", ") : "미지정 (AI 자율 반영)", isEmpty: lightingVal.length === 0 },
+        { step: 7, label: nbStepLabels[7], content: details.length > 0 ? details.join(", ") : "미지정 (AI 자율 반영)", isEmpty: details.length === 0 },
       ];
 
       // Complexity scaling
@@ -310,14 +373,19 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
     const steps = generatePromptSteps();
     if (steps.length === 1 && steps[0].step === 0) return steps[0].content;
 
+    const hasCharacter = selectedTags.some(t => t.content.toLowerCase().includes('character') || t.content.toLowerCase().includes('person'));
+    const isGraphic = labMode === 'graphic';
+    const nbGraphicParams = (isGraphic && !hasCharacter) ? " --no photorealistic, character, person, human, anime" : (isGraphic ? " --no photorealistic" : "");
+
     if (optimizationMode === 'mj') {
-      // MJ: comma-separated, last step joined with space (parameters)
-      const mainSteps = steps.filter(s => s.step < 6).map(s => s.content);
+      // MJ: comma-separated, last step joined with space (parameters), ignore empty steps
+      const mainSteps = steps.filter(s => s.step < 6 && !s.isEmpty).map(s => s.content);
       const paramStep = steps.find(s => s.step === 6);
       return mainSteps.join(", ") + (paramStep ? ` ${paramStep.content}` : "");
     } else {
-      // NB: narrative style
-      return steps.map(s => `[${s.label}] ${s.content}`).join(", ") + ".";
+      // NB: narrative style, ignore empty steps
+      const basePrompt = steps.filter(s => !s.isEmpty).map(s => `[${s.label}] ${s.content}`).join(", ") + ".";
+      return basePrompt + nbGraphicParams;
     }
   };
 
@@ -361,9 +429,9 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
   const isEmptyResult = steps.length === 1 && steps[0].step === 0;
 
   return (
-    <div className="w-full flex md:flex-row flex-col gap-6">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* LEFT: Builder Canvas */}
-      <div className="flex-1 flex flex-col gap-6">
+      <div className="lg:col-span-8 flex flex-col gap-6">
         <div className="glass-card flex flex-col p-6 min-h-[450px] shadow-2xl relative border-slate-700 w-full">
           <div className="mb-6 flex flex-wrap gap-4 items-center justify-between border-b border-slate-800 pb-4">
             <div>
@@ -434,17 +502,38 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
         {/* Live Export Output — 단계별 시각적 구분 */}
         <div className="p-8 bg-slate-950 border border-slate-800 shadow-2xl rounded-[2.5rem] relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-yellow/30 to-transparent"></div>
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-slate-500 flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-slate-500 flex items-center gap-3 mt-1 sm:mt-0">
               전문 시각 설계 서사 결과
               <span className="flex gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-ping"></span>
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow"></span>
               </span>
             </h3>
-            <span className="text-[10px] font-black px-2 py-1 bg-slate-800 text-slate-400 rounded-md border border-slate-700">
-              {optimizationMode === 'mj' ? 'MIDJOURNEY 6-STEP' : 'NANOBANANA 7-STEP'} FORMULA
-            </span>
+            
+            {/* Platform Mode Group */}
+            <div className="flex bg-slate-900/50 p-1.5 rounded-[1.25rem] border border-slate-800 w-full sm:w-auto">
+              <button
+                 onClick={() => handleOptimize('mj')}
+                 className={`flex-1 sm:px-6 h-9 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                   optimizationMode === 'mj' 
+                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'
+                 }`}
+              >
+                MIDJOURNEY
+              </button>
+              <button
+                 onClick={() => handleOptimize('nb')}
+                 className={`flex-1 sm:px-6 h-9 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all ${
+                   optimizationMode === 'nb' 
+                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' 
+                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50'
+                 }`}
+              >
+                NANOBANANA
+              </button>
+            </div>
           </div>
 
           {/* Structured step-by-step output */}
@@ -467,7 +556,7 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
                   return (
                     <div 
                       key={idx} 
-                      className={`flex items-start gap-4 px-6 py-4 ${bgColor} ${idx !== steps.length - 1 ? 'border-b border-slate-800/50' : ''} transition-colors hover:brightness-125`}
+                      className={`flex items-start gap-4 px-6 py-4 ${bgColor} ${idx !== steps.length - 1 ? 'border-b border-slate-800/50' : ''} transition-colors hover:brightness-125 ${s.isEmpty ? 'opacity-40 grayscale-[50%]' : ''}`}
                     >
                       <div className="flex items-center gap-2 shrink-0 min-w-[140px]">
                         <span className={`text-xs font-black w-6 h-6 rounded-lg flex items-center justify-center border border-current/20 ${stepColor}`}>
@@ -477,7 +566,7 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
                           {s.label}
                         </span>
                       </div>
-                      <p className="text-slate-200 font-mono text-sm leading-relaxed break-words flex-1 selection:bg-brand-yellow/30">
+                      <p className={`font-mono text-sm leading-relaxed break-words flex-1 selection:bg-brand-yellow/30 ${s.isEmpty ? 'text-slate-500 italic' : 'text-slate-200'}`}>
                         {s.content}
                       </p>
                     </div>
@@ -500,44 +589,42 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
             </div>
           )}
 
-          <div className="mt-8 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="mt-8 pt-8 border-t border-slate-800/50 flex flex-wrap items-center justify-between gap-4">
             {/* Primary Action Group */}
-            <div className="flex items-center gap-4 w-full md:w-auto">
+            {/* Primary Action Group */}
+            <div className="flex items-center gap-3 w-full xl:w-auto">
+              <button
+                onClick={handleBuildPrompt}
+                disabled={isBuilding}
+                className={`flex-1 xl:flex-none h-14 rounded-2xl font-black transition-all shadow-xl flex items-center justify-center gap-2 uppercase tracking-wider text-[13px] px-8 border ${
+                  isBuilding 
+                  ? 'bg-purple-900/50 text-purple-400 border-purple-800/50 cursor-not-allowed' 
+                  : 'bg-purple-600/20 text-purple-300 border-purple-500/30 hover:bg-purple-600 hover:text-white hover:border-purple-500 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] active:scale-95'
+                }`}
+              >
+                {isBuilding ? (
+                  <>
+                    <div className="w-4 h-4 rounded-full border-2 border-current border-t-transparent animate-spin"></div>
+                    BUILDING...
+                  </>
+                ) : (
+                  <>
+                    <span className="text-lg leading-none">✨</span> BUILD PROMPT
+                  </>
+                )}
+              </button>
+
               <button
                 onClick={copyToClipboard}
-                className="flex-1 md:flex-none bg-brand-yellow hover:bg-yellow-400 active:scale-95 text-black px-10 h-14 rounded-2xl font-black transition-all shadow-xl shadow-brand-yellow/10 flex items-center justify-center gap-3 uppercase tracking-wider text-sm"
+                className="flex-1 xl:flex-none bg-brand-yellow hover:bg-yellow-400 active:scale-95 text-black px-8 h-14 rounded-2xl font-black transition-all shadow-xl shadow-brand-yellow/10 flex items-center justify-center gap-2 uppercase tracking-wider text-[13px]"
               >
                 <Copy size={18} />
                 COPY PROMPT
               </button>
             </div>
 
-            {/* Platform Mode Group */}
-            <div className="flex bg-slate-900/50 p-1.5 rounded-[1.25rem] border border-slate-800 w-full md:w-auto">
-              <button
-                 onClick={() => handleOptimize('mj')}
-                 className={`flex-1 md:px-8 h-11 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all ${
-                   optimizationMode === 'mj' 
-                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
-                   : 'text-slate-500 hover:text-slate-300'
-                 }`}
-              >
-                MIDJOURNEY
-              </button>
-              <button
-                 onClick={() => handleOptimize('nb')}
-                 className={`flex-1 md:px-8 h-11 rounded-xl font-black text-[11px] uppercase tracking-[0.2em] transition-all ${
-                   optimizationMode === 'nb' 
-                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' 
-                   : 'text-slate-500 hover:text-slate-300'
-                 }`}
-              >
-                NANOBANANA
-              </button>
-            </div>
-
             {/* Utility Group */}
-            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+            <div className="flex items-center gap-2 w-full xl:w-auto overflow-x-auto pb-2 xl:pb-0 mt-2 xl:mt-0">
               <label className="cursor-pointer bg-slate-800/50 text-slate-400 hover:bg-slate-700 hover:text-white px-5 h-12 rounded-xl font-bold transition-all flex items-center gap-2 border border-slate-700/50 text-[10px] uppercase tracking-widest whitespace-nowrap">
                 <input type="file" accept=".md" className="hidden" onChange={handleImport} />
                 <Upload size={14} />
@@ -567,7 +654,7 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
       </div>
 
       {/* RIGHT: Tag Bank */}
-      <div className={`w-full md:w-[350px] glass-card p-6 border-slate-700 flex flex-col gap-4 transition-all duration-500 relative overflow-hidden ${activeCategoryFocus ? 'ring-2 ring-brand-yellow/50 shadow-[0_0_30px_rgba(252,211,77,0.15)]' : ''}`}>
+      <div className={`w-full lg:col-span-4 glass-card p-6 border-slate-700 flex flex-col gap-5 transition-all duration-500 relative overflow-hidden ${activeCategoryFocus ? 'ring-2 ring-brand-yellow/50 shadow-[0_0_30px_rgba(252,211,77,0.15)]' : ''}`}>
         
         {/* Glow effect for drawer open interaction */}
         <div className={`absolute top-0 right-0 w-32 h-32 bg-brand-yellow/30 rounded-full blur-[60px] pointer-events-none transition-opacity duration-1000 ${activeCategoryFocus ? 'opacity-100' : 'opacity-0'}`}></div>
@@ -629,11 +716,11 @@ ${selectedTags.map(t => `  - id: "${t.id}"\n    content: "${t.content}"\n    cat
                 key={`${labMode}-${category}`} 
                 className={`transition-all duration-300 p-2 -mx-2 rounded-xl ${isFocused ? 'bg-slate-800/80 border border-slate-700 scale-[1.02]' : ''} ${isFaded ? 'opacity-40 grayscale-[50%]' : ''}`}
               >
-                <h3 className={`text-xs tracking-widest uppercase font-bold mb-3 flex items-center gap-2 ${isFocused ? 'text-brand-yellow' : 'text-slate-500'}`}>
+                <h3 className={`text-[10px] tracking-widest uppercase font-black mb-3 flex items-center gap-2 ${isFocused ? 'text-brand-yellow' : 'text-slate-500'}`}>
                   {catLabel}
                   {isFocused && <span className="w-1.5 h-1.5 rounded-full bg-brand-yellow animate-pulse"></span>}
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-2 gap-2.5">
                   {tags.map((t) => (
                     <TagChipWithTooltip
                       key={t.id}
@@ -658,19 +745,19 @@ function TagChipWithTooltip({ tag, category, onAdd }: { tag: TagItem; category: 
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <div className="relative" 
+    <div className="relative w-full z-10" 
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
     >
       <button
         onClick={onAdd}
-        className={`text-xs font-semibold px-3 py-1.5 rounded-md border backdrop-blur-md transition-all hover:scale-105 active:scale-95 ${categoryColors[category] || "bg-slate-800 text-slate-300 border-slate-700"} hover:brightness-125`}
+        className={`w-full text-center truncate text-[11px] font-bold px-3 py-2 rounded-[0.4rem] border backdrop-blur-md transition-all hover:scale-[1.03] active:scale-95 ${categoryColors[category] || "bg-slate-800 text-slate-300 border-slate-700"} hover:brightness-125 hover:z-20`}
       >
         {tag.content}
       </button>
       {/* 한글 번역 호버 팝업 */}
       {showTooltip && tag.translationKo && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] font-bold text-brand-yellow whitespace-nowrap z-50 pointer-events-none animate-in fade-in slide-in-from-bottom-1 duration-150">
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-slate-800 border border-slate-600 rounded-lg shadow-xl text-[11px] font-bold text-brand-yellow whitespace-nowrap z-[100] pointer-events-none animate-in fade-in slide-in-from-bottom-1 duration-150">
           {tag.translationKo}
           <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-r-[5px] border-t-[5px] border-transparent border-t-slate-600"></div>
         </div>
