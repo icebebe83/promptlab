@@ -27,7 +27,7 @@ export default function WikiPage() {
           <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/5 rounded-full blur-[120px]" />
           <div className="relative z-10">
             <p className="text-sm text-slate-400 mb-8 max-w-3xl break-keep">
-              브랜드 디자인팀 전용 워크플로우: <strong className="text-slate-200">미드저니</strong>로 스타일 키워드를 추출하고, <strong className="text-slate-200">나노바나나</strong>로 정밀 편집·보정한 뒤, <strong className="text-slate-200">힉스필드</strong>로 모션과 사운드를 부여하는 3-플랫폼 파이프라인입니다.
+              브랜드 디자인팀 전용 워크플로우: <strong className="text-slate-200">프롬프트 설계소 V2</strong>의 하이브리드 비전(이미지+스타일 병합)과 스마트 블록 교체 시스템을 기반으로, <strong className="text-slate-200">미드저니</strong>로 스타일 키워드를 추출하고, <strong className="text-slate-200">나노바나나</strong>로 정밀 편집·보정한 뒤, <strong className="text-slate-200">힉스필드</strong>로 모션과 사운드를 부여하는 차세대 파이프라인입니다.
             </p>
             <div className="grid md:grid-cols-3 gap-6">
               {/* Step 1: Midjourney */}
@@ -146,12 +146,12 @@ export default function WikiPage() {
                     <span className="text-2xl font-black text-white">N</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg group-hover:text-purple-300 transition-colors">나노바나나 (Nanobanana)</h3>
-                    <p className="text-xs text-slate-500">7단계 구조화형</p>
+                    <h3 className="font-bold text-lg group-hover:text-purple-300 transition-colors">나노바나나 (Nano Banana)</h3>
+                    <p className="text-xs text-slate-500">Pro & V2 상업 광고</p>
                   </div>
                 </div>
                 <p className="text-sm text-slate-400 leading-relaxed mb-4">
-                  7단계 생성 · 4단계 편집 구조를 활용한 나노바나나 전용 프롬프트 가이드
+                  극사실주의 질감, Case 37 제품 교체 로직 등 하이엔드 상업 광고 퀄리티 전용 가이드
                 </p>
               </div>
               <div className="flex items-center gap-2 text-purple-400 text-sm font-bold group-hover:gap-3 transition-all">

@@ -31,14 +31,14 @@ const generateSteps = [
     bgColor: "bg-blue-500/10",
     textColor: "text-blue-300",
     tagColor: "bg-blue-900/40 text-blue-300",
-    description: "피사체의 종류, 수량, 특징을 명시합니다.",
+    description: "피사체의 종류, 수량, 특징을 상업 광고 수준으로 명시합니다. (NB Pro 극사실주의 반영)",
     tips: [
       "피사체를 정확한 명사로 지정하세요.",
-      "수량을 명시하면 더 정확한 결과물을 얻습니다.",
-      "의상, 재질, 주요 특징을 포함하세요."
+      "광고용 메인 제품과 서브 오브젝트를 명확히 분리하세요.",
+      "제품의 재질감(반사율, 투명도, 표면 질감)을 매우 구체적으로 묘사하세요."
     ],
-    examples: ["a modern velvet corner sofa", "three glowing crystal spheres", "a cyberpunk female hacker with red hair"],
-    badExamples: ["a nice sofa", "some spheres", "a cool girl"]
+    examples: ["a luxurious matte black perfume bottle with gold metallic caps", "crystal clear luxury skin care serum droplet with micro-bubbles", "hyper-detailed sleek white sports car with carbon fiber accents"],
+    badExamples: ["a nice perfume", "some drops", "a cool car"]
   },
   {
     step: 2,
@@ -49,13 +49,13 @@ const generateSteps = [
     bgColor: "bg-purple-500/10",
     textColor: "text-purple-300",
     tagColor: "bg-purple-900/40 text-purple-300",
-    description: "피사체가 무엇을 하는지, 주변 요소와의 관계를 설정합니다.",
+    description: "제품이 어떻게 디스플레이되는지, 어떤 상호작용 및 시각적 장치와 결합되는지 설정합니다.",
     tips: [
-      "피사체의 동적인 자세나 동작을 서술하세요.",
-      "주변 사물과 어떻게 상호작용하는지 적으세요."
+      "제품이 공중에 떠있는지(levitating), 튀어오르는지(splashing) 등 역동적 상태를 묘사하세요.",
+      "물, 빛, 연기 등 주변 효과와의 상호작용을 적으세요."
     ],
-    examples: ["sitting cross-legged on a floating chair", "typing rapidly on a holographic keyboard", "leaning against a concrete wall"],
-    badExamples: ["doing something", "standing"]
+    examples: ["splash of clear water curving elegantly around the perfume bottle", "levitating slightly above a polished obsidian stone pedestal", "shattering into glowing gold particles"],
+    badExamples: ["doing something", "standing on a table"]
   },
   {
     step: 3,
@@ -66,12 +66,12 @@ const generateSteps = [
     bgColor: "bg-emerald-500/10",
     textColor: "text-emerald-300",
     tagColor: "bg-emerald-900/40 text-emerald-300",
-    description: "장소, 시간, 날씨 등 환경 조건을 명확히 합니다.",
+    description: "제품을 돋보이게 하는 장소, 무드, 질감을 가진 배경을 설정합니다.",
     tips: [
-      "공간적/시간적 맥락을 제공하세요.",
-      "날씨와 분위기를 묘사하여 몰입감을 더하세요."
+      "주 피사체와 대비되는 색상이나 질감의 배경을 선택하세요.",
+      "단순한 스튜디오 배경이 아니라 고급스러운 텍스처(리넨, 대리석, 금속)를 환경으로 묘사하세요."
     ],
-    examples: ["inside a futuristic Tokyo subway car at midnight", "a high-end art museum with marble floors", "misty autumn forest during heavy rain"],
+    examples: ["minimalist podium set against a seamless backdrop of smooth brushed stainless steel", "abstract background features geometric forms with frosted glass finish", "premium dark moody setting with dark marble surfaces"],
     badExamples: ["in a room", "outside"]
   },
   {
@@ -83,12 +83,12 @@ const generateSteps = [
     bgColor: "bg-amber-500/10",
     textColor: "text-amber-300",
     tagColor: "bg-amber-900/40 text-amber-300",
-    description: "사진, 3D, 일러스트 등 렌더링 스타일을 정의합니다.",
+    description: "최고 수준의 상업 렌더링 스타일 및 사진 촬영 기법을 정의합니다.",
     tips: [
-      "매체(medium)를 정확히 명시하세요.",
-      "선명도, 렌더링 언진, 화풍 등을 구체적으로 나열하세요."
+      "하이엔드 3D 렌더링(Octane Render, Unreal Engine 5)인지 상업 사진(Product Photography)인지 명시하세요.",
+      "마크로 촬영인지, 하이테크 스타일인지 구체적인 화풍을 나열하세요."
     ],
-    examples: ["hyper-realistic architectural photography", "3D render in Unreal Engine 5", "water color illustration, studio ghibli style"],
+    examples: ["commercial product photography, hyper-realistic, 8k resolution, crisp details", "high-end 3D render in Octane Render, luxurious aesthetic", "macrophotography, extreme close up, editorial style"],
     badExamples: ["pretty picture", "good drawing"]
   },
   {
@@ -100,12 +100,12 @@ const generateSteps = [
     bgColor: "bg-rose-500/10",
     textColor: "text-rose-300",
     tagColor: "bg-rose-900/40 text-rose-300",
-    description: "앵글, 렌즈 화각, 피사계 심도를 지정합니다.",
+    description: "제품의 볼륨감과 시선을 압도하는 앵글, 화각을 지정합니다.",
     tips: [
-      "카메라 앵글(low angle, top-down)을 지정하세요.",
-      "특정 렌즈 스펙(85mm, 14mm)을 추가하면 사실감이 올라갑니다."
+      "제품의 웅장함을 살리는 앵글(low angle, dramatic perspective)을 지정하세요.",
+      "초광각 렌즈나 마크로 렌즈 등 특정 렌즈 스펙(100mm macro, 24mm)을 추가하세요."
     ],
-    examples: ["wide-angle lens, bird's eye view", "85mm portrait lens, shallow depth of field", "Dutch angle, dynamic composition"],
+    examples: ["100mm macro lens focus, shallow depth of field, centered heroic composition", "dynamic dramatic angle, low camera placement emphasizing height", "symmetrical and perfectly balanced framing, sharp foreground"],
     badExamples: ["make it big", "zoomed"]
   },
   {
@@ -117,12 +117,12 @@ const generateSteps = [
     bgColor: "bg-yellow-500/10",
     textColor: "text-yellow-300",
     tagColor: "bg-yellow-900/40 text-yellow-300",
-    description: "광원의 위치와 톤앤매너 등 색상을 설정합니다.",
+    description: "극적인 광고 연출을 위한 광원 위치 및 고급스러운 톤앤매너를 설정합니다.",
     tips: [
-      "광원의 종류(softbox, neon, natural sunlight)를 명시하세요.",
-      "무드와 톤(warm tone, cynical, muted colors)을 결정하세요."
+      "반사 재질을 돋보이게 하는 조명(rim light, hard spot light, cinematic studio lighting)을 활용하세요.",
+      "투톤 라이팅 등 대비를 극대화하는 색상 배열(cyan & orange, monochromatic premium styling)을 지시하세요."
     ],
-    examples: ["neon pink and cyan lighting, high contrast", "soft studio lighting, Rembrandt lighting", "golden hour sunlight, warm pastel tones"],
+    examples: ["cinematic rim lighting highlighting the edge of the bottle, soft global illumination", "harsh dramatic shadows, monochromatic dark theme with a hint of gold reflections", "volumetric light rays piercing from the top right, clear icy blue tones"],
     badExamples: ["bright lights", "darkness"]
   },
   {
@@ -134,12 +134,12 @@ const generateSteps = [
     bgColor: "bg-slate-500/10",
     textColor: "text-slate-300",
     tagColor: "bg-slate-800/60 text-slate-300",
-    description: "질감 및 제외할 요소(Negative Prompt)를 명시합니다.",
+    description: "최종 퀄리티를 폭발시키는 미세 질감 및 결함 제거를 명시합니다.",
     tips: [
-      "재질감(matte, glossy, rough texture)을 추가하세요.",
-      "화면에서 배제하고 싶은 요소를 --no 와 함께 묶거나 명시하세요."
+      "극저노이즈, 선명도 극대화(vivid clarity, insanely detailed surface)를 추가하세요.",
+      "화면에서 배제할 텍스트, 사람, 지저분한 요소를 철저히 차단하세요."
     ],
-    examples: ["intricate leather texture, 8k resolution", "highly detailed, vivid clarity", "no text, no watermarks, no people"],
+    examples: ["insanely detailed micro-surface reflections, perfect condensation drops on glass", "flawless metallic finish, UHD, masterpiece", "no text, no blurry edges, no noise, no amateur artifacts"],
     badExamples: ["detailed", "no bad stuff"]
   }
 ];
@@ -149,30 +149,30 @@ const editSteps = [
   {
     step: 1,
     title: "유지 (Maintain)",
-    description: "건드리지 않고 원본 그대로 보존해야 할 핵심 요소를 정의합니다.",
-    highlight: "얼굴, 포즈, 나이 등 아이덴티티 요소",
-    example: "keep the character's face, expression, and current body posture exactly the same"
+    description: "건드리지 않고 원본 그대로 보존해야 할 핵심 광고 환경(배경, 배치 구조 요소)을 정의합니다. (NB2 Case 37 참조)",
+    highlight: "배치된 배경 환경, 조명 세팅, 카메라 앵글, 그림자 방향",
+    example: "keep the premium studio environment, the dynamic lighting, and the overall composition exactly the same"
   },
   {
     step: 2,
     title: "변경 (Change)",
-    description: "수정하거나 새롭게 교체해야 할 타겟 영역을 명시합니다.",
-    highlight: "배경화면, 의상의 재질, 소품",
-    example: "change the background to a modern art museum wall"
+    description: "수정하거나 새롭게 교체해야 할 메인 제품 타겟 영역을 명시합니다. (광고 제품 교체 로직)",
+    highlight: "기존 오브젝트 → 신규 브랜드 제품",
+    example: "change the central object to a sleek metallic smartphone (new product)"
   },
   {
     step: 3,
     title: "방법 (Method)",
-    description: "바꾸고자 하는 요소에 어떤 구체적인 기술이나 분위기를 적용할 것인지 서술합니다.",
-    highlight: "색상 톤(B&W), 조명 추가, 화풍 변경",
-    example: "fill the wall with framed abstract paintings and warm gallery spot lighting"
+    description: "제품이 어떻게 환경에 녹아들고 대체되는지 질감과 빛반사를 중심으로 서술합니다.",
+    highlight: "사실적인 질감 적용(반사, 투명도), 환경 조명의 영향 매핑",
+    example: "integrate the newly swapped smartphone with matching reflections from the studio rim light, ensuring extremely realistic glossy finish"
   },
   {
     step: 4,
     title: "제약 조건 (Constraints)",
-    description: "편집 과정에서 절대 변형되거나 침범해서는 안 될 부분을 경고합니다.",
-    highlight: "비율 유지, 추가 인물 등장 금지",
-    example: "do not alter the lighting on the subject's face, do not add other people"
+    description: "광고 몰입도를 방해하는 시각적 오류가 발생하지 않도록 강제합니다.",
+    highlight: "추가 제품 등장 금지, 조명 모순 방지",
+    example: "do not alter the original background lighting, do not add multiple products, ensure shadows perfectly align"
   }
 ];
 
@@ -479,19 +479,19 @@ export default function NanoBananaGuideClient() {
               </p>
               
               <div className="bg-slate-900/80 rounded-xl p-5 border border-slate-700 mb-6">
-                <h3 className="text-sm font-bold text-white mb-3">예제 1: 제품 컷 브리핑 (Generate)</h3>
+                <h3 className="text-sm font-bold text-white mb-3">예제 1: 제품 컷 브리핑 (Generate / NB Pro Style)</h3>
                 <div className="relative group">
                   <code className="text-xs text-blue-300 font-mono leading-relaxed block pr-12">
-                    subject: a modern velvet corner sofa, dark green<br/>
-                    action: positioned centrally<br/>
-                    background: a minimalist living room, huge windows, concrete floor<br/>
-                    style: interior photography, hyper-realistic, 8k<br/>
-                    composition: wide-angle view, eye-level<br/>
-                    lighting: soft natural lighting through window, cinematic<br/>
-                    details: detailed fabric texture, no other furniture, no people
+                    subject: a luxurious matte black perfume bottle with gold metallic caps<br/>
+                    action: resting perfectly on a polished obsidian pedestal<br/>
+                    background: premium dark moody setting with dark marble surfaces<br/>
+                    style: commercial product photography, hyper-realistic, 8k resolution, crisp details<br/>
+                    composition: 100mm macro lens focus, centered heroic composition<br/>
+                    lighting: cinematic rim lighting highlighting the edge, harsh spotlight reflecting off gold<br/>
+                    details: insanely detailed micro-surface reflections, flawless finish, no noise
                   </code>
                   <button
-                    onClick={() => copyText("subject: a modern velvet corner sofa, dark green\naction: positioned centrally\nbackground: a minimalist living room, huge windows, concrete floor\nstyle: interior photography, hyper-realistic, 8k\ncomposition: wide-angle view, eye-level\nlighting: soft natural lighting through window, cinematic\ndetails: detailed fabric texture, no other furniture, no people")}
+                    onClick={() => copyText("subject: a luxurious matte black perfume bottle with gold metallic caps\naction: resting perfectly on a polished obsidian pedestal\nbackground: premium dark moody setting with dark marble surfaces\nstyle: commercial product photography, hyper-realistic, 8k resolution, crisp details\ncomposition: 100mm macro lens focus, centered heroic composition\nlighting: cinematic rim lighting highlighting the edge, harsh spotlight reflecting off gold\ndetails: insanely detailed micro-surface reflections, flawless finish, no noise")}
                     className="absolute top-2 right-2 text-slate-500 hover:text-brand-yellow transition-colors"
                     title="프롬프트 구조 복사"
                   >
@@ -501,16 +501,16 @@ export default function NanoBananaGuideClient() {
               </div>
 
               <div className="bg-slate-900/80 rounded-xl p-5 border border-slate-700">
-                <h3 className="text-sm font-bold text-white mb-3">예제 2: 배경 치환 편집 (Edit)</h3>
+                <h3 className="text-sm font-bold text-white mb-3">예제 2: 광고 제품 교체 편집 (Edit / NB2 Case 37)</h3>
                 <div className="relative group">
                   <code className="text-xs text-emerald-300 font-mono leading-relaxed block pr-12">
-                    maintain: keep the sofa and its lighting completely intact<br/>
-                    change: change the background living room into an art museum<br/>
-                    method: add marble tiles, a blank white wall with spotlighting<br/>
-                    constraints: do not change the sofa material or color, do not add shadows on the sofa
+                    maintain: keep the premium studio environment, the dynamic background lighting, and the overall composition exactly the same<br/>
+                    change: change the central perfume bottle into a sleek metallic smartphone<br/>
+                    method: integrate the smartphone with matching reflections from the rim light, ensuring extremely realistic glossy screen finish<br/>
+                    constraints: do not alter the existing shadows, do not add multiple products, ensure pristine integration
                   </code>
                   <button
-                    onClick={() => copyText("maintain: keep the sofa and its lighting completely intact\nchange: change the background living room into an art museum\nmethod: add marble tiles, a blank white wall with spotlighting\nconstraints: do not change the sofa material or color, do not add shadows on the sofa")}
+                    onClick={() => copyText("maintain: keep the premium studio environment, the dynamic background lighting, and the overall composition exactly the same\nchange: change the central perfume bottle into a sleek metallic smartphone\nmethod: integrate the smartphone with matching reflections from the rim light, ensuring extremely realistic glossy screen finish\nconstraints: do not alter the existing shadows, do not add multiple products, ensure pristine integration")}
                     className="absolute top-2 right-2 text-slate-500 hover:text-brand-yellow transition-colors"
                   >
                     <Copy size={16} />

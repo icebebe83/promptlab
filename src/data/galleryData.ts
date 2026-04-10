@@ -135,7 +135,7 @@ export const galleryData: GalleryItem[] = [
   },
   {
     id: "mj4",
-    imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+    imageUrl: "/images/gallery/luxury_whiskey.png",
     prompt: "luxury whiskey bottle, studio product photography, black background, soft rim lighting, Hasselblad quality, crystal glass, amber liquid, 4k detail --v 6.1 --ar 4:5 --s 200",
     platform: "midjourney",
     aspectRatio: "portrait",
